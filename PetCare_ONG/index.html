@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PetCare ONG - gestão nutricional de animais">
+  <title>PetCare ONG</title>
+  <script>
+    if (localStorage.getItem("petcare-theme") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#820AD1",
+            secondary: "#0D9488",
+            ink: "#0F172A"
+          },
+          fontFamily: {
+            poppins: ["Poppins", "sans-serif"],
+            inter: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="auth-view" class="auth-view">
+    <section class="auth-card">
+      <div class="auth-brand">
+        <div class="brand-mark"><i data-lucide="paw-print"></i></div>
+        <div>
+          <p class="eyebrow">ONG</p>
+          <h1>PetCare</h1>
+        </div>
+      </div>
+      <p class="auth-subtitle">Gestão nutricional dos animais acolhidos</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button id="login-tab" class="auth-tab active" type="button" role="tab">Entrar</button>
+        <button id="signup-tab" class="auth-tab" type="button" role="tab">Criar conta</button>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" autocomplete="email" placeholder="voce@ong.org" required>
+        </div>
+        <div class="field">
+          <label for="password">Senha</label>
+          <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo 6 caracteres" required>
+        </div>
+        <button id="auth-submit" class="btn btn-primary w-full" type="submit">
+          <i data-lucide="log-in"></i>
+          Entrar
+        </button>
+      </form>
+      <p id="auth-message" class="auth-message" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark"><i data-lucide="paw-print"></i></div>
+        <div>
+          <p class="eyebrow">ONG</p>
+          <h1>PetCare</h1>
+        </div>
+      </div>
+
+      <nav class="side-nav" aria-label="Navegação principal">
+        <button class="nav-item active" data-page="dashboard" type="button"><i data-lucide="layout-dashboard"></i><span>Painel</span></button>
+        <button class="nav-item" data-page="animals" type="button"><i data-lucide="dog"></i><span>Animais</span></button>
+        <button class="nav-item" data-page="foods" type="button"><i data-lucide="package"></i><span>Alimentos</span></button>
+        <button class="nav-item" data-page="plans" type="button"><i data-lucide="clipboard-list"></i><span>Planos</span></button>
+        <button class="nav-item" data-page="weights" type="button"><i data-lucide="scale"></i><span>Peso</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="theme-toggle" class="icon-button" type="button" title="Alternar tema" aria-label="Alternar tema">
+          <i data-lucide="moon"></i>
+        </button>
+        <button id="logout-button" class="icon-button" type="button" title="Sair" aria-label="Sair">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button id="menu-toggle" class="icon-button mobile-menu" type="button" aria-label="Abrir menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <div>
+          <p id="page-kicker" class="eyebrow">Visão geral</p>
+          <h2 id="page-title">Painel</h2>
+        </div>
+        <div id="user-avatar" class="user-avatar" title="Usuário">P</div>
+      </header>
+
+      <section id="dashboard-page" class="page active">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-icon purple"><i data-lucide="dog"></i></div>
+            <div><p>Animais</p><strong id="stat-animals">0</strong></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon teal"><i data-lucide="package"></i></div>
+            <div><p>Alimentos</p><strong id="stat-foods">0</strong></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon blue"><i data-lucide="clipboard-check"></i></div>
+            <div><p>Planos ativos</p><strong id="stat-plans">0</strong></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon amber"><i data-lucide="triangle-alert"></i></div>
+            <div><p>Alertas</p><strong id="stat-alerts">0</strong></div>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="card">
+            <div class="card-header">
+              <div><p class="eyebrow">Acompanhamento</p><h3>Animais recentes</h3></div>
+              <button class="btn btn-secondary" type="button" data-go="animals"><i data-lucide="plus"></i> Ver todos</button>
+            </div>
+            <div id="recent-animals" class="list-block"></div>
+          </article>
+          <article class="card">
+            <div class="card-header">
+              <div><p class="eyebrow">Cuidado alimentar</p><h3>Possíveis incompatibilidades</h3></div>
+            </div>
+            <div id="alerts-list" class="list-block"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="animals-page" class="page">
+        <div class="page-actions">
+          <div class="search-wrap"><i data-lucide="search"></i><input id="animal-search" type="search" placeholder="Buscar animal"></div>
+          <button class="btn btn-primary" type="button" data-add="animal"><i data-lucide="plus"></i> Novo animal</button>
+        </div>
+        <div id="animals-grid" class="entity-grid"></div>
+      </section>
+
+      <section id="foods-page" class="page">
+        <div class="page-actions">
+          <div class="search-wrap"><i data-lucide="search"></i><input id="food-search" type="search" placeholder="Buscar alimento"></div>
+          <button class="btn btn-primary" type="button" data-add="food"><i data-lucide="plus"></i> Novo alimento</button>
+        </div>
+        <div id="foods-grid" class="entity-grid"></div>
+      </section>
+
+      <section id="plans-page" class="page">
+        <div class="page-actions">
+          <div class="filter-wrap"><i data-lucide="filter"></i><select id="plan-filter"><option value="all">Todos os planos</option><option value="active">Somente ativos</option><option value="inactive">Somente inativos</option></select></div>
+          <button class="btn btn-primary" type="button" data-add="plan"><i data-lucide="plus"></i> Novo plano</button>
+        </div>
+        <div id="plans-grid" class="entity-grid"></div>
+      </section>
+
+      <section id="weights-page" class="page">
+        <div class="page-actions">
+          <div class="filter-wrap"><i data-lucide="dog"></i><select id="weight-filter"><option value="all">Todos os animais</option></select></div>
+          <button class="btn btn-primary" type="button" data-add="weight"><i data-lucide="plus"></i> Registrar peso</button>
+        </div>
+        <div id="weights-grid" class="entity-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="crud-dialog" class="crud-dialog">
+    <form id="crud-form" method="dialog">
+      <div class="dialog-header">
+        <div><p id="dialog-kicker" class="eyebrow">Cadastro</p><h3 id="dialog-title">Novo registro</h3></div>
+        <button id="dialog-close" class="icon-button" type="button" aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <div id="dialog-fields" class="dialog-fields"></div>
+      <div class="dialog-actions">
+        <button id="dialog-cancel" class="btn btn-secondary" type="button">Cancelar</button>
+        <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
